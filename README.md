@@ -35,18 +35,4 @@ Because `eduroam` blocks UDP broadcast traffic, connect all demo laptops to a **
 - On **Laptop 1**: `python3 main.py Rajveer 100`
 - On **Laptop 2**: `python3 main.py Teammate 200`
 
----
 
-## 3. Live 15-Minute Demo Script (Step-by-Step)
-1. **Show Dynamic Discovery & Initial Election**:
-   Start Node 100 (`Alice`) and Node 200 (`Bob`). Show how they automatically discover each other via UDP broadcast (`Port 50000`) and elect Node 200 as Leader. Type `/peers` to display the Group View.
-2. **Show Dynamic Join & Bully Takeover**:
-   Start Node 300 (`Charlie`). Show how it is immediately discovered and bullies Node 200 to become the new Leader (`Node 300`).
-3. **Show Total Ordered Chatting**:
-   Type messages in any terminal and show that every node prints `[Chat #1]`, `[Chat #2]`, `[Chat #3]` in the exact same global sequence.
-4. **Show Hold-Back Queue & NACK Recovery (Packet Loss Simulation)**:
-   - On `Alice` (Node 100), type `/sim_drop`. This tells Alice to artificially drop the very next incoming chat packet (`#4`).
-   - On `Charlie` (Node 300), send a chat message (`"Message Four"`). Alice drops `#4` while Bob and Charlie deliver `#4`.
-   - On `Charlie` (Node 300), send another message (`"Message Five"`). Alice receives `#5`, detects the gap (`expected 4, got 5`), places `#5` in her **Hold-Back Queue**, sends a `NACK` for `#4` to the Leader, receives `#4 (recovered via NACK)`, and immediately delivers `#4` followed by `#5` in strict Total Order!
-5. **Show Leader Crash & Fault-Tolerant Recovery**:
-   Press `Ctrl+C` on `Charlie` (Node 300, the current Leader). Wait 6 seconds (3 missed heartbeats). Show how `Alice` and `Bob` detect the crash, remove Node 300 from their Group View, automatically elect `Bob` (Node 200) as the new Leader, and continue sequencing new messages (`#6, #7...`) without losing chat history!
